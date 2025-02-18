@@ -10,6 +10,8 @@ public class PlaceGolfObjects : MonoBehaviour
     [SerializeField] private GameObject holePrefab;
     [SerializeField] private GameObject ballPrefab;
 
+    //[SerializeField] private GameObject invisibleFloorPrefab;
+
     private ARRaycastManager _arRaycastManager;
 
     private ARPlaneManager arPlaneManager;
@@ -65,6 +67,11 @@ public class PlaceGolfObjects : MonoBehaviour
                         // Second tap: place ball
                         placedBall = Instantiate(ballPrefab, hitPose.position,
                             Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
+                        //float floorY = hitPose.position.y;
+
+                        // 2. Instantiate the large invisible floor at this Y
+                        //GameObject floorCollider = Instantiate(invisibleFloorPrefab, hitPose.position, Quaternion.identity);
+                        //floorCollider.transform.position = new Vector3(0, floorY, 0);
 
                         arPlaneManager.requestedDetectionMode = PlaneDetectionMode.None;
 
