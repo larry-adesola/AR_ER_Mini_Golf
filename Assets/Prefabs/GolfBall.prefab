@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5089436761767878244}
   - component: {fileID: 818710056413934377}
   - component: {fileID: 3027552931855544899}
+  - component: {fileID: 535832764337122064}
   m_Layer: 3
   m_Name: GolfBall
   m_TagString: Untagged
@@ -115,8 +116,8 @@ Rigidbody:
   m_GameObject: {fileID: 703296803351732740}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 1
+  m_AngularDrag: 0.5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -133,3 +134,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &535832764337122064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703296803351732740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48289d2b5a01f41c88b8aa5fcec257ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  powerMultiplier: 0.01
+  maxForce: 20
+  aimLine: {fileID: 4074510402212124482, guid: 92392c8f2f40a47fab469e6345a60584, type: 3}
+  lineMaxLength: 100
