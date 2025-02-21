@@ -95,11 +95,19 @@ public class DragShoot : MonoBehaviour
     private bool IsTouchingBall(Vector2 touchPos)
     {
         Ray ray = Camera.main.ScreenPointToRay(touchPos);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
-        {
-            return hit.collider != null && hit.collider.gameObject == gameObject;
-        }
-        return false;
+
+        // Vector from the ray origin to the ball's center
+        Vector3 toBall = transform.position - ray.origin;
+
+        // Angle between the ray direction and the vector to the ball
+        float angle = Vector3.Angle(ray.direction, toBall);
+
+        // Distance from the ball's center to the closest point on the ray
+        float perpendicularDist = toBall.magnitude * Mathf.Sin(angle * Mathf.Deg2Rad);
+
+        // Compare to a threshold radius in world space
+        float nearRadius = 0.05f; // e.g. 20 cm in world units
+        return perpendicularDist <= nearRadius;
     }
 
     // Update the aim line from the ball to the finger

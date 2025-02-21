@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-public class PlaceGolfObjects : MonoBehaviour
+public class PlaceHoleAndBall : MonoBehaviour
 {
     [Header("Prefabs")]
     [SerializeField] private GameObject holePrefab;
@@ -14,7 +14,7 @@ public class PlaceGolfObjects : MonoBehaviour
 
     private ARRaycastManager _arRaycastManager;
 
-    private ARPlaneManager arPlaneManager;
+    //private ARPlaneManager arPlaneManager;
     private List<ARRaycastHit> _hits = new List<ARRaycastHit>();
 
     private GameObject placedHole;
@@ -32,7 +32,7 @@ public class PlaceGolfObjects : MonoBehaviour
     {
         _arRaycastManager = GetComponent<ARRaycastManager>();
 
-        arPlaneManager = GetComponent<ARPlaneManager>();
+        //arPlaneManager = GetComponent<ARPlaneManager>();
     }
 
     void Update()
@@ -73,7 +73,7 @@ public class PlaceGolfObjects : MonoBehaviour
                         //GameObject floorCollider = Instantiate(invisibleFloorPrefab, hitPose.position, Quaternion.identity);
                         //floorCollider.transform.position = new Vector3(0, floorY, 0);
 
-                        arPlaneManager.requestedDetectionMode = PlaneDetectionMode.None;
+                        //arPlaneManager.requestedDetectionMode = PlaneDetectionMode.None;
 
                         currentStage = PlacementStage.Done; // We are done placing
                     }
@@ -96,7 +96,7 @@ public class PlaceGolfObjects : MonoBehaviour
 
         placedHole = null;
         placedBall = null;
-        arPlaneManager.requestedDetectionMode = PlaneDetectionMode.Horizontal;
+        //arPlaneManager.requestedDetectionMode = PlaneDetectionMode.Horizontal;
 
         currentStage = PlacementStage.Hole; // Start over at hole placement
     }
