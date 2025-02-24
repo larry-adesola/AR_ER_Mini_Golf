@@ -14,14 +14,14 @@ ProjectSettings/XRSettings.asset
 ProjectSettings/XRPackageSettings.asset
 
 # Ignore unityxr default content
-Assets/UnityXRContent/
-Assets/TextMesh Pro/
-Assets/XRI/
-Assets/XR/
-Assets/TextMesh Pro.meta
-Assets/XRI.meta
-Assets/UnityXRContent.meta
-Assets/XR/
+#Assets/UnityXRContent/
+#Assets/TextMesh Pro/
+#Assets/XRI/
+#Assets/XR/
+#Assets/TextMesh Pro.meta
+#Assets/XRI.meta
+#Assets/UnityXRContent.meta
+#Assets/XR/
 
 # Other content
 .vscode/
