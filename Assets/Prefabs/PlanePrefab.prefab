@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1227704250357451980}
   - component: {fileID: 5053683918707479019}
   - component: {fileID: 4722025730969360627}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlanePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a63a66a34ec98d44abb0b5abc6a1e6d8, type: 2}
+  - {fileID: 15302, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

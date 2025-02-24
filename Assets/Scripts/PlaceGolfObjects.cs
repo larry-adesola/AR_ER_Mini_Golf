@@ -33,7 +33,10 @@ public class PlaceGolfObjects : MonoBehaviour
     public GameObject goButton;
     public GameObject cubeButton;
 
-    private Boolean flagButtonPressed,golfButtonPressed,cubeButtonPressed;
+    public LayerMask groundLayer; // Assign the AR plane's layer here
+
+    public LayerMask ballLayer; // Assign the ball's layer here
+    private Boolean flagButtonPressed, golfButtonPressed, cubeButtonPressed;
     private bool isDragging = false;
 
     private void Awake()
@@ -46,8 +49,9 @@ public class PlaceGolfObjects : MonoBehaviour
         // Only process placement if we're in a placement mode.
         if (currentPlacementMode == PlacementMode.None) return;
         if (Input.touchCount == 0) return;
-        if (flagButtonPressed || golfButtonPressed || cubeButtonPressed){
-            flagButtonPressed=golfButtonPressed=cubeButtonPressed=false;
+        if (flagButtonPressed || golfButtonPressed || cubeButtonPressed)
+        {
+            flagButtonPressed = golfButtonPressed = cubeButtonPressed = false;
             return;
         }
         Touch touch = Input.GetTouch(0);
@@ -70,13 +74,20 @@ public class PlaceGolfObjects : MonoBehaviour
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf && placedBall == null)
                     {
+                        int ballLayerNum = Mathf.RoundToInt(Mathf.Log(ballLayer.value, 2));
+                        int groundLayerNum = Mathf.RoundToInt(Mathf.Log(groundLayer.value, 2));
+                        Physics.IgnoreLayerCollision(
+                            ballLayerNum,
+                            groundLayerNum,
+                            false
+                        );
                         placedBall = Instantiate(ballPrefab, hitPose.position,
                             Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
                         placedCube = Instantiate(cubePrefab, hitPose.position,
-                            Quaternion.Euler(0,hitPose.rotation.eulerAngles.y,0));
+                            Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
                     }
                     isDragging = true;
                 }
@@ -132,7 +143,7 @@ public class PlaceGolfObjects : MonoBehaviour
                 }
             }
         }
-        flagButtonPressed=golfButtonPressed=cubeButtonPressed=false;
+        flagButtonPressed = golfButtonPressed = cubeButtonPressed = false;
     }
 
     // Check if the ARRaycastHit represents a nearly horizontal surface.
@@ -164,17 +175,19 @@ public class PlaceGolfObjects : MonoBehaviour
         currentPlacementMode = PlacementMode.PlacingCube;
         cubeList.Add(placedCube);
         placedCube = null;
-    } 
+    }
     // Called when the user taps the Reset button.
     public void ResetPlacement()
     {
         if (placedHole != null) Destroy(placedHole);
         if (placedBall != null) Destroy(placedBall);
-        foreach (GameObject cube in cubeList){
-            if (cube!= null){
+        foreach (GameObject cube in cubeList)
+        {
+            if (cube != null)
+            {
                 Destroy(cube);
             }
-            
+
         }
         cubeList.Clear();
         placedHole = null;
@@ -187,7 +200,8 @@ public class PlaceGolfObjects : MonoBehaviour
             flagButton.SetActive(true);
         if (golfButton != null)
             golfButton.SetActive(true);
-        if (cubeButton != null){
+        if (cubeButton != null)
+        {
             cubeButton.SetActive(true);
         }
         if (goButton != null)

@@ -218,6 +218,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5054818759597141111, guid: 9d3a2a0b2a19a4123ba9c64677b2956f, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6873451738652025415, guid: 9d3a2a0b2a19a4123ba9c64677b2956f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -640,6 +644,12 @@ MonoBehaviour:
   resetButton: {fileID: 27550473}
   goButton: {fileID: 1627195554}
   cubeButton: {fileID: 131544004}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  ballLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &267888564
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,8 +995,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Go!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 74dc1021f260d4bcda04fd2b9fb47451, type: 2}
-  m_sharedMaterial: {fileID: 2943696607212739092, guid: 74dc1021f260d4bcda04fd2b9fb47451, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ff7351ae9d28c4a25bb46ee5fe9be4f7, type: 2}
+  m_sharedMaterial: {fileID: -4557923487266972470, guid: ff7351ae9d28c4a25bb46ee5fe9be4f7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1049,7 +1059,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &690451181
