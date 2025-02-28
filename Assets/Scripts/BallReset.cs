@@ -38,7 +38,7 @@ public class BallResetter : MonoBehaviour
         if (transform.position.y < safeY - fallMargin)
         {
             // Keep current x and z, but reset y to safeY.
-            transform.position = new Vector3(transform.position.x, safeY, transform.position.z);
+            transform.position = new Vector3(transform.position.x, safeY + 1, transform.position.z);
 
             // Reset vertical velocity so it doesn't keep moving downward.
             Vector3 currentVel = rb.velocity;
