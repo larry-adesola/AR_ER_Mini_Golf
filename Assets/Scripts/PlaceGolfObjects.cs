@@ -33,6 +33,8 @@ public class PlaceGolfObjects : MonoBehaviour
     public GameObject goButton;
     public GameObject cubeButton;
 
+    public GameObject completeLabel;
+
     public LayerMask groundLayer; // Assign the AR plane's layer here
 
     public LayerMask ballLayer; // Assign the ball's layer here
@@ -71,6 +73,9 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         placedHole = Instantiate(holePrefab, hitPose.position,
                             Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
+
+                        MiniGolfHole triggerScript = placedHole.transform.Find("Trigger").gameObject.GetComponent<MiniGolfHole>();
+                        triggerScript.completeLabel = completeLabel;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf && placedBall == null)
                     {
@@ -203,6 +208,10 @@ public class PlaceGolfObjects : MonoBehaviour
         if (cubeButton != null)
         {
             cubeButton.SetActive(true);
+        }
+        if (completeLabel != null)
+        {
+            completeLabel.SetActive(false);
         }
         if (goButton != null)
             goButton.SetActive(false);

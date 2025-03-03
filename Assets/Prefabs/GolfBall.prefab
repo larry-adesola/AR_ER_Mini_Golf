@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48289d2b5a01f41c88b8aa5fcec257ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  powerMultiplier: 0.01
+  powerMultiplier: 0.015
   maxForce: 20
 --- !u!114 &1649155422863700091
 MonoBehaviour:

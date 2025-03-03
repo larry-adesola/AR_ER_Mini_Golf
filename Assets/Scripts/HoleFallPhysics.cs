@@ -7,8 +7,10 @@ public class MiniGolfHole : MonoBehaviour
     public LayerMask groundLayer; // Assign the AR plane's layer here
 
     public LayerMask ballLayer; // Assign the ball's layer here
-
+    public GameObject completeLabel;
     private BallResetter ballResetScript;
+
+    private DragShoot dragShootScript;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -30,6 +32,18 @@ public class MiniGolfHole : MonoBehaviour
             {
                 ballResetScript.enabled = false;
             }
+
+            dragShootScript = other.GetComponent<DragShoot>();
+            if (dragShootScript != null)
+            {
+                dragShootScript.enabled = false;
+            }
+
+            if (completeLabel != null)
+            {
+                completeLabel.SetActive(true);
+            }
+
 
             // 2. Optional: Add downward force to simulate falling
             // Rigidbody ballRb = other.GetComponent<Rigidbody>();
