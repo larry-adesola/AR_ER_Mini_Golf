@@ -46,6 +46,7 @@ public class PlaceGolfObjects : MonoBehaviour
         // Only process placement if we're in a placement mode.
         if (currentPlacementMode == PlacementMode.None) return;
         if (Input.touchCount == 0) return;
+        //if a button was pressed this frame, do not place objects
         if (flagButtonPressed || golfButtonPressed || cubeButtonPressed){
             flagButtonPressed=golfButtonPressed=cubeButtonPressed=false;
             return;
@@ -107,19 +108,22 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         if (flagButton != null)
                             flagButton.SetActive(false);
+                        currentPlacementMode = PlacementMode.None;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf)
                     {
                         if (golfButton != null)
                             golfButton.SetActive(false);
+                        currentPlacementMode = PlacementMode.None;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
                         cubeList.Add(placedCube);
-                        //placedCube = null;                        
+                        //placedCube = null; 
+                        //dont reset placement mode for cube so that we can place multiple                       
                     }
                     // Reset the mode so the user can choose the other item.
-                    currentPlacementMode = PlacementMode.None;
+                    //currentPlacementMode = PlacementMode.None;
                     isDragging = false;
 
                     // If flag and ball placed, show the Go button
