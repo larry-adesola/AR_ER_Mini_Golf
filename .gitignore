@@ -12,6 +12,9 @@ ProjectSettings/BurstAotSettings_iOS.json
 ProjectSettings/UnityConnectSettings.asset
 ProjectSettings/XRSettings.asset
 ProjectSettings/XRPackageSettings.asset
+Assets/XR/XRGeneralSettingsPerBuildTarget.asset
+Assets/XR/XRGeneralSettingsPerBuildTarget.asset.meta
+
 
 # Ignore unityxr default content
 #Assets/UnityXRContent/
