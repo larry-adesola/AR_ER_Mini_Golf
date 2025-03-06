@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
@@ -32,7 +33,7 @@ public class PlaceGolfObjects : MonoBehaviour
     public GameObject resetButton;
     public GameObject goButton;
     public GameObject cubeButton;
-
+    public Slider widthSlider;
     public GameObject completeLabel;
 
     public LayerMask groundLayer; // Assign the AR plane's layer here
@@ -93,6 +94,8 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         placedCube = Instantiate(cubePrefab, hitPose.position,
                             Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
+                        float size = widthSlider.value;
+                        placedCube.transform.localScale = new Vector3(size, size, size);
                     }
                     isDragging = true;
                 }
