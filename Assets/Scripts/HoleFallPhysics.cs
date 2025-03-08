@@ -21,11 +21,11 @@ public class MiniGolfHole : MonoBehaviour
             int groundLayerNum = Mathf.RoundToInt(Mathf.Log(groundLayer.value, 2));
 
 
-            Physics.IgnoreLayerCollision(
-                ballLayerNum,
-                groundLayerNum,
-                true
-            );
+            // Physics.IgnoreLayerCollision(
+            //     ballLayerNum,
+            //     groundLayerNum,
+            //     true
+            // );
 
             ballResetScript = other.GetComponent<BallResetter>();
             if (ballResetScript != null)

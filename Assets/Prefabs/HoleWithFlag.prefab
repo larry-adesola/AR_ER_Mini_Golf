@@ -527,6 +527,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 690355452847447634}
     m_Modifications:
+    - target: {fileID: 341597865362315282, guid: 3fe91818344cb4333ac12d3d80edfbea, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f46ad08eab4df481fb6988aadb43017a, type: 2}
     - target: {fileID: 1648360725316359968, guid: 3fe91818344cb4333ac12d3d80edfbea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -603,6 +607,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8307191411299197589, guid: 3fe91818344cb4333ac12d3d80edfbea, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dd620928b94f44b4a9c72aaf847a7964, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

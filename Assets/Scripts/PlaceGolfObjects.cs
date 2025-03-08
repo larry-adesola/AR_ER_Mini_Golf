@@ -94,7 +94,7 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         placedCube = Instantiate(cubePrefab, hitPose.position,
                             Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
-                        float size = widthSlider.value;
+                        float size = widthSlider.value / 12;
                         placedCube.transform.localScale = new Vector3(size, size, size);
                     }
                     isDragging = true;
@@ -126,13 +126,13 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         if (flagButton != null)
                             flagButton.SetActive(false);
-                        currentPlacementMode = PlacementMode.None;
+                        //currentPlacementMode = PlacementMode.None;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf)
                     {
                         if (golfButton != null)
                             golfButton.SetActive(false);
-                        currentPlacementMode = PlacementMode.None;
+                        //currentPlacementMode = PlacementMode.None;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
@@ -141,7 +141,7 @@ public class PlaceGolfObjects : MonoBehaviour
                         //dont reset placement mode for cube so that we can place multiple                       
                     }
                     // Reset the mode so the user can choose the other item.
-                    //currentPlacementMode = PlacementMode.None;
+                    currentPlacementMode = PlacementMode.None;
                     isDragging = false;
 
                     // If flag and ball placed, show the Go button
@@ -215,6 +215,10 @@ public class PlaceGolfObjects : MonoBehaviour
         {
             cubeButton.SetActive(true);
         }
+        if (widthSlider != null)
+        {
+            widthSlider.gameObject.SetActive(true);
+        }
         if (completeLabel != null)
         {
             completeLabel.SetActive(false);
@@ -238,6 +242,7 @@ public class PlaceGolfObjects : MonoBehaviour
         // Optionally hide the UI or disable further placement.
         currentPlacementMode = PlacementMode.None;
         cubeButton.SetActive(false);
+        widthSlider.gameObject.SetActive(false);
     }
 }
 //TODO: bug when you press one button then another
