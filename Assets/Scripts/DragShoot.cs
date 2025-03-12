@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 [RequireComponent(typeof(Rigidbody))]
 public class DragShoot : MonoBehaviour
@@ -8,11 +10,10 @@ public class DragShoot : MonoBehaviour
     [Header("Force Settings")]
     public float powerMultiplier = 0.05f;  // Scales how strong the shot is
     public float maxForce = 50f;         // Cap the maximum force if needed
-
+    StrokeScore strokeScore;
     // [Header("Aim Line")]
     // public LineRenderer aimLine;          // Assign via Inspector, or create one at runtime
     // public float lineMaxLength = 2f;      // Max length of the visual line in world units
-
     private bool isDragging = false;
     private Vector2 startTouchPos;        // Screen-space start of drag
     private Vector3 ballScreenPos;        // Where the ball is in screen coordinates
@@ -20,6 +21,7 @@ public class DragShoot : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        strokeScore = GameObject.Find("Stroke Count Text").GetComponent<StrokeScore>();
     }
 
 
@@ -86,6 +88,10 @@ public class DragShoot : MonoBehaviour
 
                     // Apply force
                     rb.AddForce(forceDir, ForceMode.Impulse);
+
+                    //uncomment this line if you are using strokescore.setactive(false) anywhere in proj
+                    //strokeScore = GameObject.Find("Stroke Count Text").GetComponent<StrokeScore>();
+                    strokeScore.IncrementScore();       
                 }
                 break;
         }

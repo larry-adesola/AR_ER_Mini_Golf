@@ -9,12 +9,14 @@ public class MiniGolfHole : MonoBehaviour
     public LayerMask ballLayer; // Assign the ball's layer here
     public GameObject completeLabel;
     private BallResetter ballResetScript;
-
+    private PlaceGolfObjects placeGolfObjects;
     private DragShoot dragShootScript;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(ballTag))
+        //dont trigger if we are in the ball placement mode.(can no longer change xr origin name)
+        placeGolfObjects = GameObject.Find("XR Origin (XR Rig)").GetComponent<PlaceGolfObjects>();
+        if (other.CompareTag(ballTag) && placeGolfObjects.currentPlacementMode == PlacementMode.None)
         {
             // 1. Disable collisions between the ball and AR plane
             int ballLayerNum = Mathf.RoundToInt(Mathf.Log(ballLayer.value, 2));

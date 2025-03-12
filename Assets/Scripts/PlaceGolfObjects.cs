@@ -35,7 +35,7 @@ public class PlaceGolfObjects : MonoBehaviour
     public GameObject cubeButton;
     public Slider widthSlider;
     public GameObject completeLabel;
-
+    public GameObject StrokeCountText;
     public LayerMask groundLayer; // Assign the AR plane's layer here
 
     public LayerMask ballLayer; // Assign the ball's layer here
@@ -226,6 +226,8 @@ public class PlaceGolfObjects : MonoBehaviour
         if (goButton != null)
             goButton.SetActive(false);
 
+        StrokeCountText.GetComponent<StrokeScore>().HideScore();
+
     }
 
     // Called when the user taps the Go button.
@@ -243,6 +245,8 @@ public class PlaceGolfObjects : MonoBehaviour
         currentPlacementMode = PlacementMode.None;
         cubeButton.SetActive(false);
         widthSlider.gameObject.SetActive(false);
+        StrokeCountText.GetComponent<StrokeScore>().resetScore();
+        StrokeCountText.GetComponent<StrokeScore>().ShowScore();
     }
 }
 //TODO: bug when you press one button then another
