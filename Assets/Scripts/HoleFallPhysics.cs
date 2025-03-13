@@ -1,17 +1,18 @@
 using UnityEngine;
 using System.Collections;
-
+using TMPro;
 public class MiniGolfHole : MonoBehaviour
 {
     public string ballTag = "GolfBall";
-    public LayerMask groundLayer; // Assign the AR plane's layer here
+    // public LayerMask groundLayer; // Assign the AR plane's layer here
 
-    public LayerMask ballLayer; // Assign the ball's layer here
+    // public LayerMask ballLayer; // Assign the ball's layer here
     public GameObject completeLabel;
     private BallResetter ballResetScript;
     private PlaceGolfObjects placeGolfObjects;
     private DragShoot dragShootScript;
 
+    private StrokeScore strokeScore;
     private void OnTriggerEnter(Collider other)
     {
         //dont trigger if we are in the ball placement mode.(can no longer change xr origin name)
@@ -19,8 +20,8 @@ public class MiniGolfHole : MonoBehaviour
         if (other.CompareTag(ballTag) && placeGolfObjects.currentPlacementMode == PlacementMode.None)
         {
             // 1. Disable collisions between the ball and AR plane
-            int ballLayerNum = Mathf.RoundToInt(Mathf.Log(ballLayer.value, 2));
-            int groundLayerNum = Mathf.RoundToInt(Mathf.Log(groundLayer.value, 2));
+            // int ballLayerNum = Mathf.RoundToInt(Mathf.Log(ballLayer.value, 2));
+            // int groundLayerNum = Mathf.RoundToInt(Mathf.Log(groundLayer.value, 2));
 
 
             // Physics.IgnoreLayerCollision(
@@ -28,7 +29,7 @@ public class MiniGolfHole : MonoBehaviour
             //     groundLayerNum,
             //     true
             // );
-
+            strokeScore = GameObject.Find("Stroke Count Text").GetComponent<StrokeScore>();
             ballResetScript = other.GetComponent<BallResetter>();
             if (ballResetScript != null)
             {
@@ -43,6 +44,8 @@ public class MiniGolfHole : MonoBehaviour
 
             if (completeLabel != null)
             {
+                strokeScore.HideScore();
+                completeLabel.GetComponentInChildren<TMP_Text>().text = $"Complete!!\nScore: {strokeScore.getScore()}";
                 completeLabel.SetActive(true);
             }
 

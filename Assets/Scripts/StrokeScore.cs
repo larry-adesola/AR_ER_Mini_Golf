@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class StrokeScore : MonoBehaviour
 {
     TMP_Text tmpComponent;
-    [SerializeField]int score=0;
+    [SerializeField] int score = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,10 +19,15 @@ public class StrokeScore : MonoBehaviour
 
     //increment score is called from dragshoot
     //reset score is called from placegolfobjects
-    public void IncrementScore(int increment =1)
+    public void IncrementScore(int increment = 1)
     {
         score += increment;
         UpdateScore();
+    }
+
+    public int getScore()
+    {
+        return score;
     }
     public void resetScore()
     {
