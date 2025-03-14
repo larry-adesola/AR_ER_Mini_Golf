@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
 [RequireComponent(typeof(Rigidbody))]
-public class DragShoot : MonoBehaviour
+public class DragShoot1 : MonoBehaviour
 {
     private Rigidbody rb;
 
@@ -25,95 +25,77 @@ public class DragShoot : MonoBehaviour
     }
 
 
-private void Update()
-{
-    // Check for touch input
-    if (Input.touchCount > 0)
+    private void Update()
     {
+        if (Input.touchCount == 0) return;
+
         Touch touch = Input.GetTouch(0);
-        HandleDragInput(touch.position, touch.phase);
+
+        switch (touch.phase)
+        {
+            case TouchPhase.Began:
+                // Check if the user tapped the ball (or near it) before dragging
+                if (IsTouchingBall(touch.position))
+                {
+                    isDragging = true;
+                    startTouchPos = touch.position;
+
+                    // Store the ball’s screen position once
+                    ballScreenPos = Camera.main.WorldToScreenPoint(transform.position);
+
+                    // Enable aim line if available
+                    //aimLine.enabled = true;
+
+                }
+                break;
+
+            case TouchPhase.Moved:
+            case TouchPhase.Stationary:
+                if (isDragging)
+                {
+                    // Update the aim line visuals
+                    //UpdateAimLine(touch.position);
+                }
+                break;
+
+            case TouchPhase.Ended:
+            case TouchPhase.Canceled:
+                if (isDragging)
+                {
+                    isDragging = false;
+
+                    // Hide the line
+                    //aimLine.enabled = false;
+
+                    // Calculate the force (opposite direction of drag)
+                    Vector2 endTouchPos = touch.position;
+                    Vector2 dragVector = endTouchPos - startTouchPos;
+
+                    float dragMagnitude = dragVector.magnitude * powerMultiplier;
+                    dragMagnitude = Mathf.Clamp(dragMagnitude, 0, maxForce);
+
+                    // Convert drag direction to world space
+                    // The direction is negative because we "pull back" to shoot forward
+                    Vector3 forceDir = new Vector3(-dragVector.x, 0, -dragVector.y);
+
+                    // A basic approach for orientation: align with Camera's forward
+                    // This can get more complex if your AR camera can rotate a lot.
+                    // For simplicity, let's do a rough conversion from screen space to world space:
+                    forceDir = ScreenDirectionToWorld(forceDir);
+
+                    // Scale with dragMagnitude
+                    forceDir = forceDir.normalized * dragMagnitude;
+
+                    // Apply force
+                    rb.AddForce(forceDir, ForceMode.Impulse);
+
+                    //uncomment this line if you are using strokescore.setactive(false) anywhere in proj
+                    //strokeScore = GameObject.Find("Stroke Count Text").GetComponent<StrokeScore>();
+                    strokeScore.IncrementScore();       
+                }
+                break;
+        }
     }
-    // Check for mouse input
-    else if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
-    {
-        TouchPhase phase = TouchPhase.Canceled;
-
-        if (Input.GetMouseButtonDown(0))
-            phase = TouchPhase.Began;
-        else if (Input.GetMouseButton(0))
-            phase = TouchPhase.Moved;
-        else if (Input.GetMouseButtonUp(0))
-            phase = TouchPhase.Ended;
-
-        HandleDragInput(Input.mousePosition, phase);
-    }
-}
-
-private void HandleDragInput(Vector2 inputPosition, TouchPhase phase)
-{
-    switch (phase)
-    {
-        case TouchPhase.Began:
-            // Check if the user tapped the ball (or near it) before dragging
-            if (IsTouchingBall(inputPosition))
-            {
-                isDragging = true;
-                startTouchPos = inputPosition;
-
-                // Store the ball’s screen position once
-                ballScreenPos = Camera.main.WorldToScreenPoint(transform.position);
-
-                // Enable aim line if available
-                //aimLine.enabled = true;
-            }
-            break;
-
-        case TouchPhase.Moved:
-        case TouchPhase.Stationary:
-            if (isDragging)
-            {
-                // Update the aim line visuals
-                //UpdateAimLine(inputPosition);
-            }
-            break;
-
-        case TouchPhase.Ended:
-        case TouchPhase.Canceled:
-            if (isDragging)
-            {
-                isDragging = false;
-
-                // Hide the line
-                //aimLine.enabled = false;
-
-                // Calculate the force (opposite direction of drag)
-                Vector2 endTouchPos = inputPosition;
-                Vector2 dragVector = endTouchPos - startTouchPos;
-
-                float dragMagnitude = dragVector.magnitude * powerMultiplier;
-                dragMagnitude = Mathf.Clamp(dragMagnitude, 0, maxForce);
-
-                // Convert drag direction to world space
-                // The direction is negative because we "pull back" to shoot forward
-                Vector3 forceDir = new Vector3(-dragVector.x, 0, -dragVector.y);
-
-                // A basic approach for orientation: align with Camera's forward
-                // This can get more complex if your AR camera can rotate a lot.
-                // For simplicity, let's do a rough conversion from screen space to world space:
-                forceDir = ScreenDirectionToWorld(forceDir);
-
-                // Scale with dragMagnitude
-                forceDir = forceDir.normalized * dragMagnitude;
-
-                // Apply force
-                rb.AddForce(forceDir, ForceMode.Impulse);
-
-                //strokeScore = GameObject.Find("Stroke Count Text").GetComponent<StrokeScore>();
-                strokeScore.IncrementScore();
-            }
-            break;
-    }
-}
 
     // Checks if the touch hits this ball's collider
     private bool IsTouchingBall(Vector2 touchPos)

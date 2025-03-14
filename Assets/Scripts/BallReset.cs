@@ -41,6 +41,7 @@ public class BallResetter : MonoBehaviour
             transform.position = new Vector3(transform.position.x, safeY + 1, transform.position.z);
 
             // Reset vertical velocity so it doesn't keep moving downward.
+            //consider setting velocity to 0,0,0
             Vector3 currentVel = rb.velocity;
             rb.velocity = new Vector3(currentVel.x, 0, currentVel.z);
         }

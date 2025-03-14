@@ -6,9 +6,9 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 // Define placement modes.
-public enum PlacementMode { None, PlacingFlag, PlacingGolf, PlacingCube }
+//public enum PlacementMode { None, PlacingFlag, PlacingGolf, PlacingCube }
 
-public class PlaceGolfObjects : MonoBehaviour
+public class PlaceGolfObjects1 : MonoBehaviour
 {
     [Header("Prefabs")]
     [SerializeField] private GameObject holePrefab;   // The flag/hole prefab.
@@ -20,11 +20,8 @@ public class PlaceGolfObjects : MonoBehaviour
     // References to the placed objects.
     private GameObject placedHole;
     private GameObject placedBall;
-    private GameObject placedCube;
 
-    private Vector3 holeOffset = new Vector3(0f,-0.01f,0f);
-    private Vector3 ballOffset = new Vector3(0f,0.02f,0f);
-    private Vector3 cubeOffset = new Vector3(0f,0f,0f);
+    private GameObject placedCube;
     private List<GameObject> cubeList = new List<GameObject>();
     // Current placement mode.
     public PlacementMode currentPlacementMode = PlacementMode.None;
@@ -42,63 +39,41 @@ public class PlaceGolfObjects : MonoBehaviour
     public LayerMask groundLayer; // Assign the AR plane's layer here
 
     public LayerMask ballLayer; // Assign the ball's layer here
-    private bool buttonPressed;
+    private Boolean flagButtonPressed, golfButtonPressed, cubeButtonPressed;
     private bool isDragging = false;
 
     private void Awake()
     {
         _arRaycastManager = GetComponent<ARRaycastManager>();
     }
+
     private void Update()
     {
         // Only process placement if we're in a placement mode.
         if (currentPlacementMode == PlacementMode.None) return;
-
-        //if button pressed this frame, do not place objects
-        if(buttonPressed){
-            buttonPressed = false;
+        if (Input.touchCount == 0) return;
+        if (flagButtonPressed || golfButtonPressed || cubeButtonPressed)
+        {
+            flagButtonPressed = golfButtonPressed = cubeButtonPressed = false;
             return;
         }
-        // Check for touch input.
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            HandlePlacement(touch.position, touch.phase);
-        }
-        // Check for mouse input.
-        else if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
-        {
-            // Simulate touch phases for mouse input
-            TouchPhase phase = TouchPhase.Canceled;
+        Touch touch = Input.GetTouch(0);
 
-            if (Input.GetMouseButtonDown(0))
-                phase = TouchPhase.Began;
-            else if (Input.GetMouseButton(0))
-                phase = TouchPhase.Moved;
-            else if (Input.GetMouseButtonUp(0))
-                phase = TouchPhase.Ended;
-
-            HandlePlacement(Input.mousePosition, phase);
-        }
-        buttonPressed = false;
-    }
-
-    private void HandlePlacement(Vector2 inputPosition, TouchPhase phase)
-    {
         // Raycast into the AR scene.
-        if (_arRaycastManager.Raycast(inputPosition, _hits, TrackableType.PlaneWithinPolygon))
+        if (_arRaycastManager.Raycast(touch.position, _hits, TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = _hits[0].pose;
 
             // Check that the surface is roughly horizontal.
             if (IsSurfaceFlat(_hits[0]))
             {
-                if (phase == TouchPhase.Began)
+                if (touch.phase == TouchPhase.Began)
                 {
                     // Begin drag: instantiate a preview object if not already created.
                     if (currentPlacementMode == PlacementMode.PlacingFlag && placedHole == null)
                     {
-                        placedHole = Instantiate(holePrefab, hitPose.position + holeOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
+                        placedHole = Instantiate(holePrefab, hitPose.position,
+                            Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
 
                         MiniGolfHole triggerScript = placedHole.transform.Find("Trigger").gameObject.GetComponent<MiniGolfHole>();
                         triggerScript.completeLabel = completeLabel;
@@ -107,56 +82,64 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         int ballLayerNum = Mathf.RoundToInt(Mathf.Log(ballLayer.value, 2));
                         int groundLayerNum = Mathf.RoundToInt(Mathf.Log(groundLayer.value, 2));
-                        Physics.IgnoreLayerCollision(ballLayerNum, groundLayerNum, false);
-                        placedBall = Instantiate(ballPrefab, hitPose.position + ballOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
+                        Physics.IgnoreLayerCollision(
+                            ballLayerNum,
+                            groundLayerNum,
+                            false
+                        );
+                        placedBall = Instantiate(ballPrefab, hitPose.position,
+                            Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
+                        placedCube = Instantiate(cubePrefab, hitPose.position,
+                            Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
                         float size = widthSlider.value / 12;
-                        cubeOffset = Vector3.up * (size/2);
-                        placedCube = Instantiate(cubePrefab, hitPose.position + cubeOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));                   
                         placedCube.transform.localScale = new Vector3(size, size, size);
                     }
                     isDragging = true;
                 }
-                else if (phase == TouchPhase.Moved || phase == TouchPhase.Stationary)
+                else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
                 {
                     // Update the preview object's position as the user drags.
                     if (currentPlacementMode == PlacementMode.PlacingFlag && placedHole != null)
                     {
-                        placedHole.transform.position = hitPose.position + holeOffset;
+                        placedHole.transform.position = hitPose.position;
                         placedHole.transform.rotation = Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0);
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf && placedBall != null)
                     {
-                        placedBall.transform.position = hitPose.position + ballOffset;
+                        placedBall.transform.position = hitPose.position;
                         placedBall.transform.rotation = Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0);
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube && placedCube != null)
                     {
-                        placedCube.transform.position = hitPose.position + cubeOffset;
+                        placedCube.transform.position = hitPose.position;
                         placedCube.transform.rotation = Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0);
                     }
                 }
-                else if (phase == TouchPhase.Ended || phase == TouchPhase.Canceled)
+                else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                 {
                     // Finalize placement: hide the corresponding button. 
                     // Add the placedCube to the cubeList so more can be added
                     if (currentPlacementMode == PlacementMode.PlacingFlag)
                     {
-                        if (flagButton != null && placedHole != null)
+                        if (flagButton != null)
                             flagButton.SetActive(false);
+                        //currentPlacementMode = PlacementMode.None;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf)
                     {
-                        if (golfButton != null && placedBall != null)
+                        if (golfButton != null)
                             golfButton.SetActive(false);
+                        //currentPlacementMode = PlacementMode.None;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
                         cubeList.Add(placedCube);
+                        //placedCube = null; 
+                        //dont reset placement mode for cube so that we can place multiple                       
                     }
-
                     // Reset the mode so the user can choose the other item.
                     currentPlacementMode = PlacementMode.None;
                     isDragging = false;
@@ -164,12 +147,14 @@ public class PlaceGolfObjects : MonoBehaviour
                     // If flag and ball placed, show the Go button
                     if (placedHole != null && placedBall != null)
                     {
+
                         if (goButton != null)
                             goButton.SetActive(true);
                     }
                 }
             }
         }
+        flagButtonPressed = golfButtonPressed = cubeButtonPressed = false;
     }
 
     // Check if the ARRaycastHit represents a nearly horizontal surface.
@@ -183,7 +168,7 @@ public class PlaceGolfObjects : MonoBehaviour
     // Called when the user taps the Flag button.
     public void OnFlagButtonPressed()
     {
-        buttonPressed = true;
+        flagButtonPressed = true;
         currentPlacementMode = PlacementMode.PlacingFlag;
 
     }
@@ -191,13 +176,13 @@ public class PlaceGolfObjects : MonoBehaviour
     // Called when the user taps the Golf button.
     public void OnGolfButtonPressed()
     {
-        buttonPressed = true;
+        flagButtonPressed = true;
         currentPlacementMode = PlacementMode.PlacingGolf;
     }
 
     public void OnCubeButtonPressed()
     {
-        buttonPressed = true;
+        cubeButtonPressed = true;
         currentPlacementMode = PlacementMode.PlacingCube;
         cubeList.Add(placedCube);
         placedCube = null;
@@ -205,7 +190,6 @@ public class PlaceGolfObjects : MonoBehaviour
     // Called when the user taps the Reset button.
     public void ResetPlacement()
     {
-        buttonPressed = true;
         if (placedHole != null) Destroy(placedHole);
         if (placedBall != null) Destroy(placedBall);
         foreach (GameObject cube in cubeList)
@@ -249,7 +233,6 @@ public class PlaceGolfObjects : MonoBehaviour
     // Called when the user taps the Go button.
     public void OnGoButtonPressed()
     {
-        buttonPressed = true;
         // Here you could enable the DragShoot component on the ball to let the user shoot it.
         // For example, if the ball prefab has a DragShoot script that is disabled by default:
         DragShoot ds = placedBall.GetComponent<DragShoot>();
