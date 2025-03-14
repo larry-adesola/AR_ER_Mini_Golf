@@ -164,6 +164,8 @@ public class PlaceGolfObjects : MonoBehaviour
                     // If flag and ball placed, show the Go button
                     if (placedHole != null && placedBall != null)
                     {
+                        cubeButton.SetActive(false);
+                        widthSlider.gameObject.SetActive(false);
                         if (goButton != null)
                             goButton.SetActive(true);
                     }
