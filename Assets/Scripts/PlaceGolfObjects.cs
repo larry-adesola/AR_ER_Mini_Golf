@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -48,8 +49,7 @@ public class PlaceGolfObjects : MonoBehaviour
     public LayerMask ballLayer; // Assign the ball's layer here
     private bool buttonPressed;
     private bool isDragging = false;
-
-    ARPlane largestPlane;
+    public GameObject groundPlane;
     private void Awake()
     {
         _arRaycastManager = GetComponent<ARRaycastManager>();
@@ -123,8 +123,15 @@ public class PlaceGolfObjects : MonoBehaviour
                         placedCube.transform.localScale = new Vector3(size, size, size);
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingAnchor){
-                        ARPlane hitPlane = _hits[0].trackable as ARPlane;
-                        hitPlane.AddComponent<ARAnchor>();   
+                        //ARPlane hitPlane = _hits[0].trackable as ARPlane;
+                        //hitPlane.AddComponent<ARAnchor>();   
+
+                        foreach (var plane in _arPlaneManager.trackables){
+                            Destroy(plane.gameObject); // Remove each detected plane
+                        }
+                        groundPlane.SetActive(true);
+                        _arPlaneManager.requestedDetectionMode = PlaneDetectionMode.None;
+                        groundPlane.transform.SetWorldPose(_hits[0].pose);
                     } 
                     isDragging = true;
                 }
