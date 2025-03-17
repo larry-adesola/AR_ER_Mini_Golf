@@ -91,12 +91,22 @@ public class PlaceGolfObjects : MonoBehaviour
     private void HandlePlacement(Vector2 inputPosition, TouchPhase phase)
     {
         // Raycast into the AR scene.
-        if (_arRaycastManager.Raycast(inputPosition, _hits, TrackableType.PlaneWithinPolygon))
-        {
-            Pose hitPose = _hits[0].pose;
+        Pose hitPose = new Pose();
+        Ray ray = Camera.main.ScreenPointToRay(inputPosition);
+        bool raycast = Physics.Raycast(ray, out RaycastHit hit);
 
+        if (raycast){
+            hitPose = new Pose(hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+        }else{
+            raycast = _arRaycastManager.Raycast(inputPosition, _hits, TrackableType.PlaneWithinPolygon);
+            if(raycast) hitPose = _hits[0].pose;
+        }
+        
+        if (raycast)
+        {
+            print(hitPose);
             // Check that the surface is roughly horizontal.
-            if (IsSurfaceFlat(_hits[0]))
+            if (IsSurfaceFlat(hitPose))
             {
                 if (phase == TouchPhase.Began)
                 {
@@ -104,7 +114,7 @@ public class PlaceGolfObjects : MonoBehaviour
                     if (currentPlacementMode == PlacementMode.PlacingFlag && placedHole == null)
                     {
                         placedHole = Instantiate(holePrefab, hitPose.position + holeOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
-
+                        foreach (Collider col in placedHole.GetComponentsInChildren<Collider>()){col.enabled = false;}
                         MiniGolfHole triggerScript = placedHole.transform.Find("Trigger").gameObject.GetComponent<MiniGolfHole>();
                         triggerScript.completeLabel = completeLabel;
                     }
@@ -114,6 +124,7 @@ public class PlaceGolfObjects : MonoBehaviour
                         int groundLayerNum = Mathf.RoundToInt(Mathf.Log(groundLayer.value, 2));
                         Physics.IgnoreLayerCollision(ballLayerNum, groundLayerNum, false);
                         placedBall = Instantiate(ballPrefab, hitPose.position + ballOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));
+                        placedBall.GetComponent<Collider>().enabled = false;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
@@ -121,17 +132,18 @@ public class PlaceGolfObjects : MonoBehaviour
                         cubeOffset = Vector3.up * (size/2);
                         placedCube = Instantiate(cubePrefab, hitPose.position + cubeOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));                   
                         placedCube.transform.localScale = new Vector3(size, size, size);
+                        placedCube.GetComponent<Collider>().enabled = false;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingAnchor){
                         //ARPlane hitPlane = _hits[0].trackable as ARPlane;
                         //hitPlane.AddComponent<ARAnchor>();   
-
                         foreach (var plane in _arPlaneManager.trackables){
                             Destroy(plane.gameObject); // Remove each detected plane
                         }
                         groundPlane.SetActive(true);
                         _arPlaneManager.requestedDetectionMode = PlaneDetectionMode.None;
-                        groundPlane.transform.SetWorldPose(_hits[0].pose);
+                        groundPlane.transform.SetWorldPose(hitPose);
+                        print("Ground Plane set");
                     } 
                     isDragging = true;
                 }
@@ -162,15 +174,18 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         if (flagButton != null && placedHole != null)
                             flagButton.SetActive(false);
+                        foreach (Collider col in placedHole.GetComponentsInChildren<Collider>()){col.enabled = true;}
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingGolf)
                     {
                         if (golfButton != null && placedBall != null)
                             golfButton.SetActive(false);
+                        placedBall.GetComponent<Collider>().enabled = true;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
                         cubeList.Add(placedCube);
+                        placedCube.GetComponent<Collider>().enabled = true;
                     }
 
                     // Reset the mode so the user can choose the other item.
@@ -191,9 +206,9 @@ public class PlaceGolfObjects : MonoBehaviour
     }
 
     // Check if the ARRaycastHit represents a nearly horizontal surface.
-    private bool IsSurfaceFlat(ARRaycastHit hit)
+    private bool IsSurfaceFlat(Pose hit)
     {
-        return Vector3.Dot(hit.pose.up, Vector3.up) > 0.95f;
+        return Vector3.Dot(hit.up, Vector3.up) > 0.95f;
     }
 
     // --- UI Button Callbacks ---
