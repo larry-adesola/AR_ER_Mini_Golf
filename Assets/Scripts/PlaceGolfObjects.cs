@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARFoundation.VisualScripting;
 using UnityEngine.XR.ARSubsystems;
 
 // Define placement modes.
-public enum PlacementMode { None, PlacingFlag, PlacingGolf, PlacingCube }
+public enum PlacementMode { None, PlacingFlag, PlacingGolf, PlacingCube, PlacingAnchor}
 
 public class PlaceGolfObjects : MonoBehaviour
 {
@@ -15,6 +17,7 @@ public class PlaceGolfObjects : MonoBehaviour
     [SerializeField] private GameObject ballPrefab;   // The golf ball prefab.
     [SerializeField] private GameObject cubePrefab;   // cube obstacle prefab
     private ARRaycastManager _arRaycastManager;
+    private ARPlaneManager _arPlaneManager;
     private List<ARRaycastHit> _hits = new List<ARRaycastHit>();
 
     // References to the placed objects.
@@ -36,6 +39,7 @@ public class PlaceGolfObjects : MonoBehaviour
     public GameObject resetButton;
     public GameObject goButton;
     public GameObject cubeButton;
+    public GameObject anchorButton;
     public Slider widthSlider;
     public GameObject completeLabel;
     public GameObject StrokeCountText;
@@ -45,12 +49,15 @@ public class PlaceGolfObjects : MonoBehaviour
     private bool buttonPressed;
     private bool isDragging = false;
 
+    ARPlane largestPlane;
     private void Awake()
     {
         _arRaycastManager = GetComponent<ARRaycastManager>();
+        _arPlaneManager = GetComponent<ARPlaneManager>();
     }
     private void Update()
     {
+
         // Only process placement if we're in a placement mode.
         if (currentPlacementMode == PlacementMode.None) return;
 
@@ -77,10 +84,8 @@ public class PlaceGolfObjects : MonoBehaviour
                 phase = TouchPhase.Moved;
             else if (Input.GetMouseButtonUp(0))
                 phase = TouchPhase.Ended;
-
             HandlePlacement(Input.mousePosition, phase);
         }
-        buttonPressed = false;
     }
 
     private void HandlePlacement(Vector2 inputPosition, TouchPhase phase)
@@ -117,6 +122,10 @@ public class PlaceGolfObjects : MonoBehaviour
                         placedCube = Instantiate(cubePrefab, hitPose.position + cubeOffset, Quaternion.Euler(0, hitPose.rotation.eulerAngles.y, 0));                   
                         placedCube.transform.localScale = new Vector3(size, size, size);
                     }
+                    else if (currentPlacementMode == PlacementMode.PlacingAnchor){
+                        ARPlane hitPlane = _hits[0].trackable as ARPlane;
+                        hitPlane.AddComponent<ARAnchor>();   
+                    } 
                     isDragging = true;
                 }
                 else if (phase == TouchPhase.Moved || phase == TouchPhase.Stationary)
@@ -245,6 +254,7 @@ public class PlaceGolfObjects : MonoBehaviour
             goButton.SetActive(false);
 
         StrokeCountText.GetComponent<StrokeScore>().HideScore();
+        anchorButton.SetActive(true);
 
     }
 
@@ -264,8 +274,34 @@ public class PlaceGolfObjects : MonoBehaviour
         currentPlacementMode = PlacementMode.None;
         cubeButton.SetActive(false);
         widthSlider.gameObject.SetActive(false);
+        anchorButton.SetActive(false);
         StrokeCountText.GetComponent<StrokeScore>().resetScore();
         StrokeCountText.GetComponent<StrokeScore>().ShowScore();
+    }
+
+    public void OnAnchorButtonPressed(){
+        buttonPressed = true;
+        currentPlacementMode = PlacementMode.PlacingAnchor;
+    }
+    public ARPlane GetLargestPlane()
+    {
+        float maxArea = 0f;
+        ARPlane largestPlane = null;
+
+        foreach (var plane in _arPlaneManager.trackables) // Loop instead of LINQ
+        {
+            if (plane.alignment == PlaneAlignment.HorizontalUp)
+            {
+                float area = plane.size.x * plane.size.y; // Compute area
+                if (area > maxArea)
+                {
+                    maxArea = area;
+                    largestPlane = plane;
+                }
+            }
+        }
+
+        return largestPlane;
     }
 }
 //TODO: bug when you press one button then another
