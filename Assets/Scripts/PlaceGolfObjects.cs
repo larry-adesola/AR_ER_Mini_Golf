@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -44,6 +45,8 @@ public class PlaceGolfObjects : MonoBehaviour
     public LayerMask ballLayer; // Assign the ball's layer here
     private bool buttonPressed;
     private bool isDragging = false;
+    public Vector3 teePosition;
+
 
     private void Awake()
     {
@@ -151,6 +154,7 @@ public class PlaceGolfObjects : MonoBehaviour
                     {
                         if (golfButton != null && placedBall != null)
                             golfButton.SetActive(false);
+                        teePosition = placedBall.transform.position;
                     }
                     else if (currentPlacementMode == PlacementMode.PlacingCube)
                     {
@@ -267,6 +271,17 @@ public class PlaceGolfObjects : MonoBehaviour
         StrokeCountText.GetComponent<StrokeScore>().resetScore();
         StrokeCountText.GetComponent<StrokeScore>().ShowScore();
     }
+
+    public void OnCompleteButtonPressed()
+    {
+        //reset ball position and velocity
+        placedBall.transform.position = teePosition;
+        placedBall.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        //reset buttons and dragshoot script
+        OnGoButtonPressed();
+        completeLabel.SetActive(false);
+
+    } 
 }
 //TODO: bug when you press one button then another
 //probably because raycast going through button

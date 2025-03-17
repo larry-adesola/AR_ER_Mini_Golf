@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.SocialPlatforms.Impl;
 public class MiniGolfHole : MonoBehaviour
 {
     public string ballTag = "GolfBall";
+    [SerializeField]public int highScore = 999;
     // public LayerMask groundLayer; // Assign the AR plane's layer here
 
     // public LayerMask ballLayer; // Assign the ball's layer here
@@ -44,8 +46,10 @@ public class MiniGolfHole : MonoBehaviour
 
             if (completeLabel != null)
             {
+                int score = strokeScore.getScore();
+                if (score < highScore)highScore = score;
                 strokeScore.HideScore();
-                completeLabel.GetComponentInChildren<TMP_Text>().text = $"Complete!!\nScore: {strokeScore.getScore()}";
+                completeLabel.GetComponentInChildren<TMP_Text>().text = $"Complete!!\nScore: {score}\nBest Score: {highScore}";
                 completeLabel.SetActive(true);
             }
 
