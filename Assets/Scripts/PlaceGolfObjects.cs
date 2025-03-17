@@ -22,7 +22,7 @@ public class PlaceGolfObjects : MonoBehaviour
     private GameObject placedBall;
     private GameObject placedCube;
 
-    private Vector3 holeOffset = new Vector3(0f,-0.01f,0f);
+    private Vector3 holeOffset = new Vector3(0f,-0.03f,0f);
     private Vector3 ballOffset = new Vector3(0f,0.02f,0f);
     private Vector3 cubeOffset = new Vector3(0f,0f,0f);
     private List<GameObject> cubeList = new List<GameObject>();
